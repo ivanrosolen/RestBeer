@@ -1,0 +1,13 @@
+{
+    "name": "RestBeer",
+    "authors": [
+        {
+            "name": "Ivan Rosolen",
+            "email": "ivan@rosolen.net"
+        }
+    ],
+    "require": {
+      "respect/rest": "0.5.x",
+      "respect/validation": "dev-develop"
+    }
+}
