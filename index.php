@@ -16,6 +16,7 @@ require 'vendor/autoload.php';
  
 use Respect\Rest\Router;
 use Respect\Config\Container;
+use Respect\Validation\Validator as v;
 use Respect\Relational\Mapper;
 use Respect\Data\Collections\Collection;
 
@@ -27,7 +28,7 @@ $config = new Container('config.ini');
 /** 
  * Criar instância PDO com o SQLite usando as configs
  */
-//$mapper = new Mapper(new Db(new PDO($config->dsn)));
+//$mapper = new Mapper(new PDO($config->dsn));
 
 
 // Criar instância do router
@@ -57,7 +58,10 @@ $router->get('/admin', function () {
 
 // Rota para listar informações de uma cerveja
 $router->get('/cervejas/*', function ($nome) use ($mapper) {
-    if ( empty($nome) ) {
+
+    // Validar com negação se string esta preenchida
+    if ( v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+
         $cervejas = $mapper->cervejas->fetchAll();
         // como fazer isso no respect? ** olhar bot pro json e o retorno 200
         //return new Response (json_encode($cervejas), 200);
@@ -66,7 +70,7 @@ $router->get('/cervejas/*', function ($nome) use ($mapper) {
     }
 
     // tratar os dados
-    $nome = filter_var( $nome, FILTER_SANITIZE_STRING );
+    $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
     if ( !$cerveja ) {
@@ -86,12 +90,20 @@ $router->post('/cervejas', function () use ($mapper) {
     //pega os dados
     parse_str(file_get_contents('php://input'), $data);
 
-    // colocar o validation
-    if ( !isset($data['cerveja']) || 
-         !isset($data['cerveja']['nome']) ||
-         empty($data['cerveja']['nome']) || 
-         !isset($data['cerveja']['estilo']) ||
-         empty($data['cerveja']['estilo'])) {
+    if ( !isset($data['cerveja']) ) {
+        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
+        //return new Response('Faltam parâmetros', 400);
+        header('HTTP/1.1 400 Bad Request');
+        return 'Faltam parâmetros'; 
+    }
+
+    // Validar o input
+    $validation = v::arr()                                                        // validar se é array                  
+                 ->key('nome',   $rule = v::alnum()->notEmpty()->noWhitespace())  // validar a key 'nome' se não está vazia   
+                 ->key('estilo', $rule)                                           // utilizando a mesma regra da key de cima      
+                 ->validate($data['cerveja']);
+
+    if ( !$validation ) {
         // como fazer isso no respect? ** olhar bot pro json e o retorno 404
         //return new Response('Faltam parâmetros', 400);
         header('HTTP/1.1 400 Bad Request');
@@ -100,8 +112,8 @@ $router->post('/cervejas', function () use ($mapper) {
 
     // tratar os dados
     $cerveja         = new stdClass();
-    $cerveja->nome   = filter_var($data['cerveja']['nome'],   FILTER_SANITIZE_STRING);
-    $cerveja->estilo = filter_var($data['cerveja']['estilo'], FILTER_SANITIZE_STRING);
+    $cerveja->nome   = filter_var($data['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $cerveja->estilo = filter_var($data['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $mapper->author->persist($cerveja);
     $mapper->flush();
@@ -124,17 +136,29 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
     //pega os dados
     parse_str(file_get_contents('php://input'), $data);
 
-    // colocar o validation
-    if ( !isset($data['cerveja']) || 
-         !isset($data['cerveja']['nome']) ||
-         empty($data['cerveja']['nome']) || 
-         !isset($data['cerveja']['estilo']) ||
-         empty($data['cerveja']['estilo'])) {
+    if ( !isset($data['cerveja']) ) {
         // como fazer isso no respect? ** olhar bot pro json e o retorno 404
         //return new Response('Faltam parâmetros', 400);
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
+
+    // Validar o input
+    $validation = v::arr()                                                        // validar se é array                  
+                 ->key('nome',   $rule = v::alnum()->notEmpty()->noWhitespace())  // validar a key 'nome' se não está vazia   
+                 ->key('estilo', $rule)                                           // utilizando a mesma regra da key de cima      
+                 ->validate($data['cerveja']);
+
+    if ( !$validation ) {
+        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
+        //return new Response('Faltam parâmetros', 400);
+        header('HTTP/1.1 400 Bad Request');
+        return 'Faltam parâmetros'; 
+    }
+
+    // tratar os dados
+    $nome   = filter_var( $data['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    $estilo = filter_var( $data['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     // verificar se existe a cerveja
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
@@ -145,13 +169,9 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
         return 'Não encontrada'; 
     }
 
-    // tratar os dados
-    $nome   = filter_var( $data['cerveja']['nome'],   FILTER_SANITIZE_STRING );
-    $estilo = filter_var( $data['cerveja']['estilo'], FILTER_SANITIZE_STRING );
-
-    //Persiste na base de dados
-    $cerveja->nome = $nome;
-    $cerveja->nome = $estilo;
+    //Persiste na base de dados ($mapper retorna objeto preenchido full)
+    $cerveja->nome   = $nome;
+    $cerveja->estilo = $estilo;
     $mapper->cervejas->persist($cerveja);
     $mapper->flush();
 
@@ -162,13 +182,17 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
 $router->delete('/cervejas/*', function ($nome) use ($mapper) {
 
     // tratar os dados
-    $nome = filter_var( $data['cerveja']['nome'],   FILTER_SANITIZE_STRING );
+    $nome = filter_var( $data['cerveja']['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+    // Validar com negação se string esta preenchida
+    if ( v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+        header('HTTP/1.1 400 Bad Request');
+        return 'Faltam parâmetros'; 
+    }
 
     // verificar se existe a cerveja
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
     if ( !$cerveja ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response (json_encode('Não encontrada'), 404);
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada'; 
     }
