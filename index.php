@@ -70,11 +70,16 @@ $crevejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
     // tratar os dados
     $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
+    // validar conteúdo
+    if ( v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+        header('HTTP/1.1 404 Not Found');
+        return 'Não encontrada';
+    }
+
+    // buscar cerveja pelo nome
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
 
     if ( !$cerveja ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response (json_encode('Não encontrada'), 404);
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada'; 
     }
