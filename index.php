@@ -28,7 +28,7 @@ $config = new Container('config.ini');
 /** 
  * Criar instância PDO com o SQLite usando as configs
  */
-//$mapper = new Mapper(new PDO($config->dsn));
+$mapper = new Mapper(new PDO($config->dsn));
 
 
 // Criar instância do router
@@ -56,23 +56,22 @@ $router->get('/admin', function () {
     return checkLogin($user, $pass);
 });
 
-// Rota para listar informações de uma cerveja
-$router->get('/cervejas/*', function ($nome) use ($mapper) {
+// Rota para listar informações de uma cerveja (e $cervejas pra reutilizar)
+$crevejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
 
     // Validar com negação se string esta preenchida
-    if ( v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+    if ( !isset($nome) ) {
 
         $cervejas = $mapper->cervejas->fetchAll();
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 200
-        //return new Response (json_encode($cervejas), 200);
         header('HTTP/1.1 200 Ok');
-        return json_encode($cervejas);
+        return json_encode($cervejas,true);
     }
 
     // tratar os dados
     $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
+
     if ( !$cerveja ) {
         // como fazer isso no respect? ** olhar bot pro json e o retorno 404
         //return new Response (json_encode('Não encontrada'), 404);
@@ -81,7 +80,7 @@ $router->get('/cervejas/*', function ($nome) use ($mapper) {
     }
 
     header('HTTP/1.1 200 Ok');
-    return json_encode($cerveja); 
+    return json_encode($cerveja,true);
 });
 
 
@@ -90,9 +89,9 @@ $router->post('/cervejas', function () use ($mapper) {
     //pega os dados
     parse_str(file_get_contents('php://input'), $data);
 
-    if ( !isset($data['cerveja']) ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response('Faltam parâmetros', 400);
+    return serialize($data);
+
+    if ( !isset($data) || !isset($data['cerveja']) || v::not(v::arr())->validate($data['cerveja']) ) {
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
@@ -126,9 +125,8 @@ $router->post('/cervejas', function () use ($mapper) {
     }
     
     //redireciona para a nova cerveja
-    // como fazer isso no respect direito return $app->redirect('/cervejas/' . $data['nome'], 201);
     header('HTTP/1.1 201 Created');  
-    header('Location: /cervejas/'.$cerveja->nome);
+    $cervejas->createUri($cerveja->nome);
 });
 
 $router->put('/cervejas/*', function ($nome) use ($mapper) {
@@ -136,9 +134,7 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
     //pega os dados
     parse_str(file_get_contents('php://input'), $data);
 
-    if ( !isset($data['cerveja']) ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response('Faltam parâmetros', 400);
+    if ( !isset($data) || !isset($data['cerveja']) || v::not(v::arr())->validate($data['cerveja']) ) {
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
@@ -182,10 +178,10 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
 $router->delete('/cervejas/*', function ($nome) use ($mapper) {
 
     // tratar os dados
-    $nome = filter_var( $data['cerveja']['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     // Validar com negação se string esta preenchida
-    if ( v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+    if ( !isset($nome) || v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
@@ -198,18 +194,10 @@ $router->delete('/cervejas/*', function ($nome) use ($mapper) {
     }
 
     $mapper->cervejas->remove($cerveja);
-    $mapper->flush();
+    //$mapper->flush();
 
     $app['db']->delete('cervejas', array('id' => $cerveja['id']));
     
     header('HTTP/1.1 200 Ok');
     return 'Cerveja removida';
 });
-
-// usar o always pra mostar testes de se tem token
-//$router->always('By', ?????);
-
-// fazer com o through??? ** definir pra geral que o tipo de resposta é json
-/*$app->after(function (Request $request, Response $response) {
-    $response->headers->set('Content-Type', 'text/json');
-});*/

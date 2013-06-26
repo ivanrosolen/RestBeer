@@ -3,25 +3,24 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "247bec72cc0bbd53921fd05a93bd0e69",
+    "hash": "3fbf7caf35887ff510c4fe12880520ef",
     "packages": [
         {
             "name": "respect/config",
-            "version": "1.0.0",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Respect/Config.git",
-                "reference": "1.0.0"
+                "reference": "0.3.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Respect/Config/zipball/1.0.0",
-                "reference": "1.0.0",
+                "url": "https://api.github.com/repos/Respect/Config/zipball/0.3.1",
+                "reference": "0.3.1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "respect/test": "dev-master"
+                "php": ">=5.3.0"
             },
             "type": "library",
             "autoload": {
@@ -31,37 +30,16 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-3-Clause"
+                "New BSD"
             ],
             "authors": [
                 {
-                    "name": "Henrique Moody",
-                    "email": "henriquemoody@gmail.com",
-                    "homepage": "http://henriquemoody.com/"
-                },
-                {
-                    "name": "Alexandre Gomes Gaigalas",
+                    "name": "Alexandre Gaigalas",
                     "email": "alexandre@gaigalas.net"
-                },
-                {
-                    "name": "Rogerio Prado de Jesus",
-                    "email": "rogeriopradoj@gmail.com"
-                },
-                {
-                    "name": "Thiago Rigo",
-                    "email": "thiagophx@gmail.com"
                 },
                 {
                     "name": "Augusto Pascutti",
                     "email": "augusto@phpsp.org.br"
-                },
-                {
-                    "name": "Nick Lombard",
-                    "email": "github@jigsoft.co.za"
-                },
-                {
-                    "name": "Ivo Nascimento",
-                    "email": "iannsp@gmail.com"
                 }
             ],
             "description": "A powerful, small, deadly simple configurator and dependency injection container made to be easy.",
@@ -72,7 +50,7 @@
                 "dic",
                 "respect"
             ],
-            "time": "2013-02-22 04:37:20"
+            "time": "2012-02-01 20:53:31"
         },
         {
             "name": "respect/data",
@@ -105,7 +83,7 @@
                     "homepage": "http://henriquemoody.com/"
                 },
                 {
-                    "name": "Alexandre Gomes Gaigalas",
+                    "name": "Alexandre Gaigalas",
                     "email": "alexandre@gaigalas.net"
                 },
                 {
@@ -126,20 +104,20 @@
         },
         {
             "name": "respect/relational",
-            "version": "0.4.7",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Respect/Relational.git",
-                "reference": "0.4.7"
+                "reference": "0.5.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Respect/Relational/zipball/0.4.7",
-                "reference": "0.4.7",
+                "url": "https://api.github.com/repos/Respect/Relational/zipball/0.5.1",
+                "reference": "0.5.1",
                 "shasum": ""
             },
             "require": {
-                "respect/data": ">=0.1.5"
+                "respect/data": "0.2.1"
             },
             "type": "library",
             "autoload": {
@@ -158,7 +136,7 @@
                     "homepage": "http://henriquemoody.com/"
                 },
                 {
-                    "name": "Alexandre Gomes Gaigalas",
+                    "name": "Alexandre Gaigalas",
                     "email": "alexandre@gaigalas.net"
                 },
                 {
@@ -174,7 +152,7 @@
                     "email": "claudsonweb@gmail.com"
                 },
                 {
-                    "name": "Kinn Coelho Julião",
+                    "name": "kinn Coelho Julião",
                     "email": "kinncj@gmail.com",
                     "homepage": "http://kinncj.com.br",
                     "role": "Developer"
@@ -227,7 +205,7 @@
                     "email": "contato@augustopascutti.com"
                 },
                 {
-                    "name": "kleberhs007",
+                    "name": "Kleber Hamada Sato",
                     "email": "kleberhs007@yahoo.com"
                 },
                 {
@@ -281,43 +259,6 @@
             ],
             "description": "Thin controller for RESTful applications",
             "time": "2012-09-16 23:16:41"
-        },
-        {
-            "name": "respect/test",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Respect/Test.git",
-                "reference": "c4ca19b08ea208b36e6f826fe8ea2c8cab42cb68"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Respect/Test/zipball/c4ca19b08ea208b36e6f826fe8ea2c8cab42cb68",
-                "reference": "c4ca19b08ea208b36e6f826fe8ea2c8cab42cb68",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Respect\\Test": "library/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Alexandre Gomes Gaigalas",
-                    "email": "alexandre@gaigalas.net"
-                },
-                {
-                    "name": "Nick Lombard",
-                    "email": "github@jigsoft.co.za"
-                }
-            ],
-            "description": "At Respect we are serious about testing, this is Test the serious Project.",
-            "time": "2013-02-24 03:59:47"
         },
         {
             "name": "respect/validation",
@@ -446,9 +387,9 @@
 
     ],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "respect/test": 20
-    },
+    "stability-flags": [
+
+    ],
     "platform": [
 
     ],
