@@ -57,7 +57,7 @@ $router->get('/admin', function () {
 });
 
 // Rota para listar informações de uma cerveja (e $cervejas pra reutilizar)
-$crevejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
+$cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
 
     // Validar com negação se string esta preenchida
     if ( !isset($nome) ) {
@@ -71,7 +71,7 @@ $crevejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
     $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     // validar conteúdo
-    if ( v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+    if ( v::not(v::alnum()->notEmpty())->validate($nome) ) {
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada';
     }
@@ -94,7 +94,7 @@ $router->post('/cervejas', function () use ($mapper) {
     //pega os dados
     parse_str(file_get_contents('php://input'), $data);
 
-    return serialize($data);
+    return serialize(file_get_contents('php://input'));
 
     if ( !isset($data) || !isset($data['cerveja']) || v::not(v::arr())->validate($data['cerveja']) ) {
         header('HTTP/1.1 400 Bad Request');
@@ -108,8 +108,6 @@ $router->post('/cervejas', function () use ($mapper) {
                  ->validate($data['cerveja']);
 
     if ( !$validation ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response('Faltam parâmetros', 400);
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
@@ -151,28 +149,34 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
                  ->validate($data['cerveja']);
 
     if ( !$validation ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response('Faltam parâmetros', 400);
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
 
     // tratar os dados
-    $nome   = filter_var( $data['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-    $estilo = filter_var( $data['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-    // verificar se existe a cerveja
+    // validar conteúdo
+    if ( v::not(v::alnum()->notEmpty())->validate($nome) ) {
+        header('HTTP/1.1 404 Not Found');
+        return 'Não encontrada';
+    }
+
+    // buscar cerveja pelo nome
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
+
     if ( !$cerveja ) {
-        // como fazer isso no respect? ** olhar bot pro json e o retorno 404
-        //return new Response (json_encode('Não encontrada'), 404);
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada'; 
     }
 
+    // tratar os dados
+    $newNome   = filter_var( $data['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    $newEstilo = filter_var( $data['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
     //Persiste na base de dados ($mapper retorna objeto preenchido full)
-    $cerveja->nome   = $nome;
-    $cerveja->estilo = $estilo;
+    $cerveja->nome   = $newNome;
+    $cerveja->estilo = $newEstilo;
     $mapper->cervejas->persist($cerveja);
     $mapper->flush();
 
@@ -186,12 +190,12 @@ $router->delete('/cervejas/*', function ($nome) use ($mapper) {
     $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     // Validar com negação se string esta preenchida
-    if ( !isset($nome) || v::not(v::alnum()->notEmpty()->noWhitespace())->validate($nome) ) {
+    if ( !isset($nome) || v::not(v::alnum()->notEmpty())->validate($nome) ) {
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
 
-    // verificar se existe a cerveja
+    // verificar se existe a cerveja pelo nome
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
     if ( !$cerveja ) {
         header('HTTP/1.1 404 Not Found');
@@ -199,9 +203,7 @@ $router->delete('/cervejas/*', function ($nome) use ($mapper) {
     }
 
     $mapper->cervejas->remove($cerveja);
-    //$mapper->flush();
-
-    $app['db']->delete('cervejas', array('id' => $cerveja['id']));
+    $mapper->flush();
     
     header('HTTP/1.1 200 Ok');
     return 'Cerveja removida';
