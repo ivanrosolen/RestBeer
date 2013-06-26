@@ -23,25 +23,23 @@ Criar um vhost (exemplo apache):
 
 Criar o host na sua máquina:
 
-  127.0.0.1 restbeer.local
+	127.0.0.1 restbeer.local
 
 Instalar o composer.phar: 
 
 <https://getcomposer.org/doc/00-intro.md#downloading-the-composer-executable>
 
-  $ curl -sS https://getcomposer.org/installer | php
-
+	$ curl -sS https://getcomposer.org/installer | php
 
 Exemplo de .htaccess
 
 <https://github.com/Respect/Rest/tree/develop/public>
 
-  RewriteEngine On
+	RewriteEngine On
 
-  # Redirect all requests not pointing at an actual file to index.php
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule . index.php [L] 
-
+	# Redirect all requests not pointing at an actual file to index.php
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule . index.php [L] 
 
 ##### Composer.json
 
