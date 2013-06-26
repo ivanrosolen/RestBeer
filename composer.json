@@ -8,6 +8,8 @@
     ],
     "require": {
       "respect/rest": "0.5.x",
-      "respect/validation": "dev-develop"
+      "respect/validation": "dev-develop",
+      "respect/Config": "dev-develop",
+      "respect/Relational": "dev-develop"
     }
 }

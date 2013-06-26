@@ -1,5 +1,14 @@
 # RestBeer
 
+         _.._..,_,_
+        (          )
+         ]~,"-.-~~[
+       .=])' (;  ([
+       | ]:: '    [
+       '=]): .)  ([
+         |:: '    |
+          ~~----~~
+
 
 #### Preparar Ambiente
 
@@ -34,6 +43,8 @@ Instalar o composer.phar:
 
 Exemplo de .htaccess
 
+<https://github.com/Respect/Rest/tree/develop/public>
+
 	RewriteEngine On
 
 	# Redirect all requests not pointing at an actual file to index.php
@@ -53,3 +64,4 @@ Utilizamos composer para carregar os projetos que vamos usar
 
 * Rodar o php composer.phar install no diretório do projeto
 * Criar o arquivo index.php e rotas OU baixar do github
+* Ver palestra <http://slideshare.com/ivanrosolen/>
