@@ -7,9 +7,11 @@
         }
     ],
     "require": {
+      "respect/test": "dev-master",
       "respect/rest": "0.5.x",
-      "respect/validation": "dev-develop",
-      "respect/Config": "dev-develop",
-      "respect/Relational": "dev-develop"
+      "respect/validation": "0.4.x",
+      "respect/data": "0.2.x",
+      "respect/relational": "0.4.x",
+      "respect/config": "1.0.x"
     }
 }
