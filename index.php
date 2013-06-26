@@ -79,6 +79,9 @@ $cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
     // buscar cerveja pelo nome
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
 
+    // BONUS - podemos buscar por id também 
+    // $cerveja = $mapper->cervejas[$id]->fetch();
+
     if ( !$cerveja ) {
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada'; 
@@ -115,7 +118,7 @@ $router->post('/cervejas', function () use ($mapper) {
     $cerveja->estilo = filter_var($_POST['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $mapper->cervejas->persist($cerveja);
-    //$mapper->flush();
+    $mapper->flush();
 
     // verificar se gravou
     if ( !isset($cerveja->id) || empty($cerveja->id) ) {
@@ -162,6 +165,9 @@ $router->put('/cervejas/*', function ($nome) use ($mapper) {
     // buscar cerveja pelo nome
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
 
+    // BONUS - podemos buscar por id também 
+    // $cerveja = $mapper->cervejas[$id]->fetch();
+
     if ( !$cerveja ) {
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada'; 
@@ -194,6 +200,10 @@ $router->delete('/cervejas/*', function ($nome) use ($mapper) {
 
     // verificar se existe a cerveja pelo nome
     $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
+
+    // BONUS - podemos buscar por id também 
+    // $cerveja = $mapper->cervejas[$id]->fetch();
+    
     if ( !$cerveja ) {
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada'; 
