@@ -91,12 +91,9 @@ $cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
 
 $router->post('/cervejas', function () use ($mapper) {
     
-    //pega os dados
-    parse_str(file_get_contents('php://input'), $data);
+    //pega os dados via $_POST
 
-    return serialize(file_get_contents('php://input'));
-
-    if ( !isset($data) || !isset($data['cerveja']) || v::not(v::arr())->validate($data['cerveja']) ) {
+    if ( !isset($_POST) || !isset($_POST['cerveja']) || v::not(v::arr())->validate($_POST['cerveja']) ) {
         header('HTTP/1.1 400 Bad Request');
         return 'Faltam parâmetros'; 
     }
@@ -105,7 +102,7 @@ $router->post('/cervejas', function () use ($mapper) {
     $validation = v::arr()                                                        // validar se é array                  
                  ->key('nome',   $rule = v::alnum()->notEmpty()->noWhitespace())  // validar a key 'nome' se não está vazia   
                  ->key('estilo', $rule)                                           // utilizando a mesma regra da key de cima      
-                 ->validate($data['cerveja']);
+                 ->validate($_POST['cerveja']);
 
     if ( !$validation ) {
         header('HTTP/1.1 400 Bad Request');
@@ -114,11 +111,11 @@ $router->post('/cervejas', function () use ($mapper) {
 
     // tratar os dados
     $cerveja         = new stdClass();
-    $cerveja->nome   = filter_var($data['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $cerveja->estilo = filter_var($data['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $cerveja->nome   = filter_var($_POST['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $cerveja->estilo = filter_var($_POST['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-    $mapper->author->persist($cerveja);
-    $mapper->flush();
+    $mapper->cervejas->persist($cerveja);
+    //$mapper->flush();
 
     // verificar se gravou
     if ( !isset($cerveja->id) || empty($cerveja->id) ) {
@@ -129,7 +126,7 @@ $router->post('/cervejas', function () use ($mapper) {
     
     //redireciona para a nova cerveja
     header('HTTP/1.1 201 Created');  
-    $cervejas->createUri($cerveja->nome);
+    return $cervejas->createUri($cerveja->nome);
 });
 
 $router->put('/cervejas/*', function ($nome) use ($mapper) {
