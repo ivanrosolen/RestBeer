@@ -50,6 +50,7 @@ Utilizamos composer para carregar os projetos que vamos usar
 * Respect/Rest
 * Respect/Validation
 * Respect/Relational
+* Respect/Config
 
 #### Install
 
