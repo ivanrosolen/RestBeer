@@ -2,16 +2,14 @@
     "name": "RestBeer",
     "authors": [
         {
-            "name": "Ivan Rosolen",
-            "email": "ivan@rosolen.net"
+          "name": "Ivan Rosolen",
+          "email": "ivan@rosolen.net"
         }
     ],
     "require": {
-      "respect/test": "dev-master",
       "respect/rest": "0.5.x",
-      "respect/validation": "0.4.x",
-      "respect/data": "0.2.1",
-      "respect/relational": "0.4.x",
-      "respect/config": "1.0.x"
+      "respect/relational": "0.5.x",
+      "respect/config": "0.3.x",
+      "respect/validation": "0.4.x"
     }
 }
