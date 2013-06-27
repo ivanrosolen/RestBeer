@@ -28,6 +28,7 @@ $config = new Container('config.ini');
 /** 
  * Criar instância PDO com o SQLite usando as configs
  */
+// diretório precisa ter permissão de escrita também
 $mapper = new Mapper(new PDO($config->dsn));
 
 
@@ -92,7 +93,7 @@ $cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
 });
 
 
-$router->post('/cervejas', function () use ($mapper) {
+$router->post('/cervejas', function () use ($mapper,$cervejas) {
     
     //pega os dados via $_POST
 
@@ -117,19 +118,27 @@ $router->post('/cervejas', function () use ($mapper) {
     $cerveja->nome   = filter_var($_POST['cerveja']['nome'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $cerveja->estilo = filter_var($_POST['cerveja']['estilo'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
+    // buscar cerveja pelo nome para ver se já tem
+    $check = $mapper->cervejas(array( 'nome' => $cerveja->nome ))->fetch();
+    if ( $check ) {
+        header('HTTP/1.1 409 Conflict');
+        return 'Cerveja já existe no sistema'; 
+    }
+
+    // gravar nova cerveja
     $mapper->cervejas->persist($cerveja);
     $mapper->flush();
 
     // verificar se gravou
     if ( !isset($cerveja->id) || empty($cerveja->id) ) {
-        // ver qual melhor header aqui
         header('HTTP/1.1 500 Internal Server Error');
         return 'Erro ao inserir cerveja';
     }
     
     //redireciona para a nova cerveja
-    header('HTTP/1.1 201 Created');  
-    return $cervejas->createUri($cerveja->nome);
+    header('HTTP/1.1 201 Created');
+    // para caso mude o endereço não precisar alterar :)
+    header('Location: '.$cervejas->createUri($cerveja->nome));
 });
 
 $router->put('/cervejas/*', function ($nome) use ($mapper) {
@@ -215,3 +224,6 @@ $router->delete('/cervejas/*', function ($nome) use ($mapper) {
     header('HTTP/1.1 200 Ok');
     return 'Cerveja removida';
 });
+
+// para debugar melhor as exceptions
+//$router->run();
