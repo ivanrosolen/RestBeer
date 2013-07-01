@@ -57,8 +57,8 @@ $router->get('/admin', function () {
     return checkLogin($user, $pass);
 });
 
-// Rota para listar informações de uma cerveja (e $cervejas pra reutilizar)
-$cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
+// Rota para listar informações de uma cerveja ou todas
+$router->get('/cervejas/*', function ($nome) use ($mapper) {
 
     // Validar com negação se string esta preenchida
     if ( !isset($nome) ) {
