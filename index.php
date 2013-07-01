@@ -65,7 +65,7 @@ $cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
 
         $cervejas = $mapper->cervejas->fetchAll();
         header('HTTP/1.1 200 Ok');
-        return json_encode($cervejas,true);
+        return $cervejas;
     }
 
     // tratar os dados
@@ -89,7 +89,7 @@ $cervejas = $router->get('/cervejas/*', function ($nome) use ($mapper) {
     }
 
     header('HTTP/1.1 200 Ok');
-    return json_encode($cerveja,true);
+    return $cerveja;
 });
 
 
@@ -137,8 +137,10 @@ $router->post('/cervejas', function () use ($mapper,$cervejas) {
     
     //redireciona para a nova cerveja
     header('HTTP/1.1 201 Created');
+
     // para caso mude o endereço não precisar alterar :)
-    header('Location: '.$cervejas->createUri($cerveja->nome));
+    //header('Location: '.$cervejas->createUri($cerveja->nome));
+    //header('Location: cervejas/'.$cerveja->nome);
 });
 
 $router->put('/cervejas/*', function ($nome) use ($mapper) {
@@ -224,6 +226,16 @@ $router->delete('/cervejas/*', function ($nome) use ($mapper) {
     header('HTTP/1.1 200 Ok');
     return 'Cerveja removida';
 });
+
+$jsonRender = function ($data) {
+    header('Content-Type: application/json');
+    if ( v::string()->validate($data) ) {
+        $data = array($data);
+    }
+    return json_encode($data,true);
+};
+
+$router->always('Accept', array('application/json' => $jsonRender));
 
 // para debugar melhor as exceptions
 //$router->run();
