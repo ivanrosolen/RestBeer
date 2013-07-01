@@ -139,8 +139,7 @@ $router->post('/cervejas', function () use ($mapper,$cervejas) {
     header('HTTP/1.1 201 Created');
 
     // para caso mude o endereço não precisar alterar :)
-    //header('Location: '.$cervejas->createUri($cerveja->nome));
-    //header('Location: cervejas/'.$cerveja->nome);
+    header('Location: http://'.$_SERVER['HTTP_HOST'].$cervejas->createUri($cerveja->nome));
 });
 
 $router->put('/cervejas/*', function ($nome) use ($mapper) {
