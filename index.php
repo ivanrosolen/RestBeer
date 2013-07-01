@@ -137,9 +137,7 @@ $router->post('/cervejas', function () use ($mapper,$cervejas) {
     
     //redireciona para a nova cerveja
     header('HTTP/1.1 201 Created');
-
-    // para caso mude o endereço não precisar alterar :)
-    header('Location: http://'.$_SERVER['HTTP_HOST'].$cervejas->createUri($cerveja->nome));
+    return 'Cerveja criada'; 
 });
 
 $router->put('/cervejas/*', function ($nome) use ($mapper) {
