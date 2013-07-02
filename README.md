@@ -45,14 +45,18 @@ Exemplo de .htaccess
 
 Utilizamos composer para carregar os projetos que vamos usar
 
-* Respect/Rest
-* Respect/Validation
-* Respect/Relational
-* Respect/Config
+* [Respect/Rest](http://github.com/Respect/Rest)
+* [Respect/Validation](http://github.com/Respect/Validation)
+* [Respect/Relational](http://github.com/Respect/Relational)
+* [Respect/Config](http://github.com/Respect/Config)
 
 #### Install
 
 * Rodar o php composer.phar install no diretório do projeto
 * Criar o arquivo index.php e rotas OU baixar do github
+
+#### Refs
+
 * Ver palestra <http://slideshare.com/ivanrosolen/>
 * Manual Respect/Rest em português <http://www.cssexperts.net/respect-rest-docs-br/>
+* Mais docs <http://respect.li/>
