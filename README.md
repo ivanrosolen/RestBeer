@@ -57,7 +57,7 @@ Utilizamos composer para carregar os projetos que vamos usar
 
 #### Refs
 
-* Ver palestra <http://slideshare.com/ivanrosolen/>
+* Ver palestra <http://www.slideshare.net/ivanrosolen/restbeer>
 * Manual Respect/Rest em português <http://www.cssexperts.net/respect-rest-docs-br/>
 * Mais docs <http://respect.li/>
 * Inpirado na palestra <https://github.com/eminetto/restbeer>
