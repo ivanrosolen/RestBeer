@@ -15,10 +15,15 @@ Criar um vhost (exemplo apache):
           AllowOverride All
           Order Allow,Deny
           Allow from all
-    </Directory>        
+          
+	  RewriteEngine On
+	  # Redirect all requests not pointing at an actual file to index.php
+	  RewriteCond %{REQUEST_FILENAME} !-f
+	  RewriteRule . index.php [L] 
+      </Directory>        
         
-        CustomLog /caminho_dos_logs/restbeer-access_log combined
-        ErrorLog /caminho_dos_logs/restbeer-error_log
+      CustomLog /caminho_dos_logs/restbeer-access_log combined
+      ErrorLog /caminho_dos_logs/restbeer-error_log
   </VirtualHost>
 
 Criar o host na sua máquina:
@@ -31,15 +36,7 @@ Instalar o composer.phar:
 
 	$ curl -sS https://getcomposer.org/installer | php
 
-Exemplo de .htaccess
-
-<https://github.com/Respect/Rest/tree/develop/public>
-
-	RewriteEngine On
-
-	# Redirect all requests not pointing at an actual file to index.php
-	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteRule . index.php [L] 
+Não use .htaccess - há problemas de performance e exposição
 
 ##### Composer.json
 
