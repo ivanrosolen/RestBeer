@@ -13,7 +13,7 @@
 */
 
 require 'vendor/autoload.php';
- 
+
 use Respect\Rest\Router;
 use Respect\Config\Container;
 use Respect\Validation\Validator as v;
