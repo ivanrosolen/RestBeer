@@ -22,8 +22,8 @@ Criar um vhost (exemplo apache):
           RewriteRule . index.php [L] 
     </Directory>        
         
-        CustomLog /caminho_dos_logs/restbeer-access_log combined
-        ErrorLog /caminho_dos_logs/restbeer-error_log
+      CustomLog /caminho_dos_logs/restbeer-access_log combined
+      ErrorLog /caminho_dos_logs/restbeer-error_log
   </VirtualHost>
 
 Criar o host na sua máquina:
