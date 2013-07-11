@@ -58,10 +58,10 @@ $router->get('/admin', function () {
 });
 
 // Rota para listar informações de uma cerveja ou todas
-$router->get('/cervejas/*', function ($nome) use ($mapper) {
+$router->get('/cervejas/*', function ($data) use ($mapper) {
 
     // Validar com negação se string esta preenchida
-    if ( !isset($nome) ) {
+    if ( !isset($data) ) {
 
         $cervejas = $mapper->cervejas->fetchAll();
         header('HTTP/1.1 200 Ok');
@@ -69,19 +69,22 @@ $router->get('/cervejas/*', function ($nome) use ($mapper) {
     }
 
     // tratar os dados
-    $nome = filter_var( $nome, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    $data = filter_var( $data, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
     // validar conteúdo
-    if ( v::not(v::alnum()->notEmpty())->validate($nome) ) {
+    if ( v::not(v::alnum()->notEmpty())->validate($data) ) {
         header('HTTP/1.1 404 Not Found');
         return 'Não encontrada';
     }
 
-    // buscar cerveja pelo nome
-    $cerveja = $mapper->cervejas(array( 'nome' => $nome ))->fetch();
-
-    // BONUS - podemos buscar por id também 
-    // $cerveja = $mapper->cervejas[$id]->fetch();
+    // buscar cerveja por id
+    if ( v::int()->validate( $data ) ) {
+        // buscar cerveja por id
+        $cerveja = $mapper->cervejas[$data]->fetch();
+    } else {
+        // buscar cerveja pelo nome
+        $cerveja = $mapper->cervejas(array( 'nome' => $data ))->fetch();
+    }
 
     if ( !$cerveja ) {
         header('HTTP/1.1 404 Not Found');
@@ -93,7 +96,7 @@ $router->get('/cervejas/*', function ($nome) use ($mapper) {
 });
 
 
-$router->post('/cervejas', function () use ($mapper,$cervejas) {
+$router->post('/cervejas', function () use ($mapper) {
     
     //pega os dados via $_POST
 
